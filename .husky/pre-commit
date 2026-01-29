@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# Secret detection - prevent committing sensitive data
+echo "Checking for secrets..."
+
+# Patterns to detect secrets
+SECRET_PATTERNS=(
+  'rs_live_[a-zA-Z0-9]+'
+  'rs_test_[a-zA-Z0-9]+'
+  'sk_live_[a-zA-Z0-9]+'
+  'sk_test_[a-zA-Z0-9]+'
+  'AKIA[0-9A-Z]{16}'
+  'aws_secret_access_key'
+  'private_key'
+  '-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----'
+  'password\s*=\s*["\047][^"\047]+'
+  'api_key\s*=\s*["\047][^"\047]+'
+  'secret\s*=\s*["\047][^"\047]+'
+)
+
+# Files to check (staged files only)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|js|json|env|yml|yaml|md)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  echo "No relevant files to check for secrets."
+else
+  SECRETS_FOUND=0
+
+  for pattern in "${SECRET_PATTERNS[@]}"; do
+    # Use grep to find matches, excluding test files and example placeholders
+    MATCHES=$(echo "$STAGED_FILES" | xargs grep -l -E "$pattern" 2>/dev/null | grep -v '\.test\.ts$' | grep -v 'README\.md$' || true)
+
+    if [ -n "$MATCHES" ]; then
+      for file in $MATCHES; do
+        # Check if it's a real secret (not a placeholder like 'rs_live_xxxxx')
+        # Also exclude comments (lines starting with // or #) and documentation
+        REAL_SECRETS=$(grep -E "$pattern" "$file" | grep -v 'xxxxx' | grep -v 'your_' | grep -v 'example' | grep -v '<.*>' | grep -v '^\s*//' | grep -v '^\s*#' | grep -v '^\s*\*' | grep -v 'rs_live_\*' | grep -v 'rs_test_\*' || true)
+        if [ -n "$REAL_SECRETS" ]; then
+          echo "⚠️  Potential secret found in $file:"
+          echo "$REAL_SECRETS"
+          SECRETS_FOUND=1
+        fi
+      done
+    fi
+  done
+
+  if [ $SECRETS_FOUND -eq 1 ]; then
+    echo ""
+    echo "❌ Secrets detected! Please remove them before committing."
+    echo "   If these are false positives, you can skip this check with: git commit --no-verify"
+    exit 1
+  fi
+
+  echo "✓ No secrets detected."
+fi
+
+# Run lint-staged
+npx lint-staged
