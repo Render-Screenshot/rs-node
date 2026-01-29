@@ -363,4 +363,4 @@ MIT
 
 - [Documentation](https://renderscreenshot.com/docs)
 - [API Reference](https://renderscreenshot.com/docs/endpoints/post-screenshot)
-- [GitHub Issues](https://github.com/renderscreenshot/rs-node/issues)
+- [GitHub Issues](https://github.com/Render-Screenshot/rs-node/issues)

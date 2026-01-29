@@ -53,10 +53,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/renderscreenshot/rs-node.git"
+    "url": "https://github.com/Render-Screenshot/rs-node.git"
   },
   "bugs": {
-    "url": "https://github.com/renderscreenshot/rs-node/issues"
+    "url": "https://github.com/Render-Screenshot/rs-node/issues"
   },
   "homepage": "https://renderscreenshot.com/docs/sdks/node",
   "engines": {
