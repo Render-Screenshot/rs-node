@@ -1,6 +1,7 @@
 {
   "name": "renderscreenshot",
   "version": "1.0.0",
+  "type": "module",
   "description": "Official Node.js/TypeScript SDK for RenderScreenshot - A developer-friendly screenshot API",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
