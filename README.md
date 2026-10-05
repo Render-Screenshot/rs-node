@@ -352,8 +352,8 @@ try {
 
 ## Requirements
 
-- Node.js 18.0.0 or higher
-- Native `fetch` support (built into Node.js 18+)
+- Node.js 20.0.0 or higher
+- Native `fetch` support (built into Node.js 20+)
 
 ## License
 
