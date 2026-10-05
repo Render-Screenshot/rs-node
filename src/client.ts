@@ -119,7 +119,7 @@ export class Client {
     try {
       const headers: Record<string, string> = {
         Authorization: `Bearer ${this.apiKey}`,
-        'User-Agent': 'renderscreenshot-node/1.0.0',
+        'User-Agent': 'renderscreenshot-node/1.1.0',
         ...options.headers,
       };
 

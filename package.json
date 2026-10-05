@@ -1,6 +1,6 @@
 {
   "name": "renderscreenshot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "Official Node.js/TypeScript SDK for RenderScreenshot - A developer-friendly screenshot API",
   "main": "dist/cjs/index.js",
@@ -54,7 +54,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Render-Screenshot/rs-node.git"
+    "url": "git+https://github.com/Render-Screenshot/rs-node.git"
   },
   "bugs": {
     "url": "https://github.com/Render-Screenshot/rs-node/issues"
