@@ -54,6 +54,8 @@ export type {
 
   // Responses
   ScreenshotResponse,
+  BatchImage,
+  BatchStatus,
   BatchRequestItem,
   BatchResponseItem,
   BatchResponse,

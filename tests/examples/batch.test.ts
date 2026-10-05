@@ -36,14 +36,18 @@ describe('Batch Examples', () => {
           failed: 0,
           results: [
             {
+              position: 0,
               url: 'https://example1.com',
-              success: true,
-              response: { url: 'https://cdn.renderscreenshot.com/a.png' },
+              status: 'completed',
+              image: { image_url: 'https://cdn.renderscreenshot.com/a.png' },
+              error: null,
             },
             {
+              position: 1,
               url: 'https://example2.com',
-              success: true,
-              response: { url: 'https://cdn.renderscreenshot.com/b.png' },
+              status: 'completed',
+              image: { image_url: 'https://cdn.renderscreenshot.com/b.png' },
+              error: null,
             },
           ],
         }),
@@ -132,5 +136,52 @@ describe('Batch Examples', () => {
     expect(status.status).toBe('processing');
     expect(status.total).toBe(10);
     expect(status.completed).toBe(5);
+  });
+
+  it('Reads completed and failed items - docs example', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          id: 'batch_abc123',
+          status: 'completed',
+          total: 2,
+          completed: 1,
+          failed: 1,
+          results: [
+            {
+              position: 0,
+              url: 'https://github.com',
+              status: 'completed',
+              image: {
+                image_url: 'https://cdn.renderscreenshot.com/a.png',
+                width: 1200,
+                height: 630,
+              },
+              error: null,
+            },
+            {
+              position: 1,
+              url: 'https://broken.example',
+              status: 'failed',
+              image: null,
+              error: 'Page failed to load within 30 seconds',
+            },
+          ],
+          usage: { credits: 1, remaining: 99 },
+        }),
+    });
+
+    const client = new Client('rs_live_xxxxx');
+    const results = await client.batch(['https://github.com', 'https://broken.example']);
+
+    const urls = (results.results ?? []).map((item) =>
+      item.status === 'completed' ? item.image?.image_url : 'failed'
+    );
+
+    expect(urls).toEqual(['https://cdn.renderscreenshot.com/a.png', 'failed']);
+    expect(results.results?.[1]?.error).toBe('Page failed to load within 30 seconds');
+    expect(results.completed).toBe(1);
+    expect(results.failed).toBe(1);
   });
 });

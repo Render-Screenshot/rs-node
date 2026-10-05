@@ -230,28 +230,53 @@ export interface BatchRequestItem {
 }
 
 /**
- * Batch response item
+ * Batch status
  */
-export interface BatchResponseItem {
-  url: string;
-  success: boolean;
-  response?: ScreenshotResponse;
-  error?: {
-    code: string;
-    message: string;
-  };
+export type BatchStatus = 'pending' | 'processing' | 'completed' | 'failed';
+
+/**
+ * Screenshot details for a completed batch item
+ */
+export interface BatchImage {
+  image_url: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  format?: string;
 }
 
 /**
- * Batch response
+ * Batch response item.
+ * `image` is set when `status` is `'completed'`; `error` is a message when `status` is `'failed'`.
+ */
+export interface BatchResponseItem {
+  position?: number;
+  url: string;
+  status: BatchStatus;
+  image: BatchImage | null;
+  error: string | null;
+  response_time_ms?: number | null;
+}
+
+/**
+ * Batch response. Counts are top-level fields; `results` and `usage` are present once the batch has finished.
  */
 export interface BatchResponse {
   id: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: BatchStatus;
   total: number;
-  completed: number;
-  failed: number;
-  results: BatchResponseItem[];
+  completed?: number;
+  failed?: number;
+  progress?: number;
+  message?: string;
+  credits_used?: number;
+  started_at?: string | null;
+  completed_at?: string | null;
+  results?: BatchResponseItem[];
+  usage?: {
+    credits: number;
+    remaining: number;
+  };
 }
 
 /**
